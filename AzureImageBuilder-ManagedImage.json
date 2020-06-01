@@ -63,7 +63,7 @@
 			"identity": {
             "type": "UserAssigned",
                     "userAssignedIdentities": {
-                    "<imgBuilderId>": {}
+                    "</subscriptions/855e8315-9913-4e1d-8f7f-d2daa0662caa/resourcegroups/sjwvd/providers/Microsoft.ManagedIdentity/userAssignedIdentities/>": {}
                         
                 }
 			},
