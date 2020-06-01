@@ -8,15 +8,15 @@
 		},
 		"offer": {
 			"type": "string",
-			"defaultValue": "windows-10-2004-vhd-client-prod-stage"
+			"defaultValue": "Windows-10"
 		},
 		"sku": {
 			"type": "string",
-			"defaultValue": "20h1-ent-g2"
+			"defaultValue": "20h1-entn-g2"
 		},
 		"version": {
 			"type": "string",
-			"defaultValue": "18362.418.1910070306",
+			"defaultValue": "19041.264.2005110456",
 			"metadata": {
 				"description": "Version of the image, can be found with powershell: Get-AzVMImage -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10 -Skus 19h1-evd"
 			}
