@@ -63,7 +63,7 @@
 			"identity": {
             "type": "UserAssigned",
                     "userAssignedIdentities": {
-                    "aibIdentity": {}
+                    "<imgBuilderId>": {}
                         
                 }
 			},
