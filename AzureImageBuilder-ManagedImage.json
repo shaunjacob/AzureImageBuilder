@@ -16,7 +16,7 @@
 		},
 		"version": {
 			"type": "string",
-			"defaultValue": "latest",
+			"defaultValue": "18362.418.1910070306",
 			"metadata": {
 				"description": "Version of the image, can be found with powershell: Get-AzVMImage -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10 -Skus 19h1-evd"
 			}
