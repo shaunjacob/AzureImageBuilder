@@ -14,13 +14,13 @@
 			"type": "string",
 			"defaultValue": "20h1-ent-g2"
 		},
-		// "version": {
-		// 	"type": "string",
-		// 	"defaultValue": "18362.418.1910070306",
-		// 	"metadata": {
-		// 		"description": "Version of the image, can be found with powershell: Get-AzVMImage -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10 -Skus 19h1-evd"
-		// 	}
-		// },
+		"version": {
+			"type": "string",
+			"defaultValue": "latest",
+			"metadata": {
+				"description": "Version of the image, can be found with powershell: Get-AzVMImage -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10 -Skus 19h1-evd"
+			}
+		},
 		"ScriptUri": {
 			"type": "string",
 			"defaultValue": "https://raw.githubusercontent.com/shaunjacob/AzureImageBuilder/master/AzureImageBuilder.ps1",
@@ -65,8 +65,8 @@
 					"type": "PlatformImage",
 					"publisher": "[parameters('publisher')]",
 					"offer": "[parameters('offer')]",
-					"sku": "[parameters('sku')]"
-					// "version": "[parameters('version')]"
+					"sku": "[parameters('sku')]",
+					"version": "[parameters('version')]"
 				},
 				"customize": [
 					{
