@@ -8,22 +8,22 @@
 		},
 		"offer": {
 			"type": "string",
-			"defaultValue": "windows-10"
+			"defaultValue": "windows-10-2004-vhd-client-prod-stage"
 		},
 		"sku": {
 			"type": "string",
-			"defaultValue": "19h1-evd"
+			"defaultValue": "20h1-ent-g2"
 		},
-		"version": {
-			"type": "string",
-			"defaultValue": "18362.418.1910070306",
-			"metadata": {
-				"description": "Version of the image, can be found with powershell: Get-AzVMImage -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10 -Skus 19h1-evd"
-			}
-		},
+		// "version": {
+		// 	"type": "string",
+		// 	"defaultValue": "18362.418.1910070306",
+		// 	"metadata": {
+		// 		"description": "Version of the image, can be found with powershell: Get-AzVMImage -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10 -Skus 19h1-evd"
+		// 	}
+		// },
 		"ScriptUri": {
 			"type": "string",
-			"defaultValue": "https://raw.githubusercontent.com/Everink/AzureImageBuilder/master/Scripts/AzureImageBuilder.ps1",
+			"defaultValue": "https://raw.githubusercontent.com/shaunjacob/AzureImageBuilder/master/AzureImageBuilder.ps1",
 			"metadata": {
 				"description": "Location of powershell script to customize your image"
 			}
@@ -65,8 +65,8 @@
 					"type": "PlatformImage",
 					"publisher": "[parameters('publisher')]",
 					"offer": "[parameters('offer')]",
-					"sku": "[parameters('sku')]",
-					"version": "[parameters('version')]"
+					"sku": "[parameters('sku')]"
+					// "version": "[parameters('version')]"
 				},
 				"customize": [
 					{
