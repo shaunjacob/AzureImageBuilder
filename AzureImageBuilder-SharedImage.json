@@ -1,89 +1,106 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "imageTemplateName": {
-        "type": "string"
-        },
-        "api-version": {
-          "type": "string"
-        },
-        "svclocation": {
-            "type": "string"
-        }
-    },
-    
-    "variables": {
-    },
-
-
-    "resources": [
-    {
-    "name": "[parameters('imageTemplateName')]",
-    "type": "Microsoft.VirtualMachineImages/imageTemplates",
-    "apiVersion": "[parameters('api-version')]",
-    "location": "[parameters('svclocation')]",
-    "dependsOn": [],
-    
-    "tags": {
-        "imagebuilderTemplate": "AzureVMImageBuilderSIGonSIG",
-        "userIdentity": "enabled"
-            },
-        "identity": {
-            "type": "UserAssigned",
-                    "userAssignedIdentities": {
-                    "<imgBuilderId>": {}
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"publisher": {
+			"type": "string",
+			"defaultValue": "MicrosoftWindowsDesktop"
+		},
+		"offer": {
+			"type": "string",
+			"defaultValue": "office-365"
+		},
+		"sku": {
+			"type": "string",
+			"defaultValue": "20h1-evd-o365pp"
+		},
+		"version": {
+			"type": "string",
+			"defaultValue": "19041.264.2005110456",
+			"metadata": {
+				"description": "Version of the image, can be found with powershell: Get-AzVMImage -Location westeurope -PublisherName MicrosoftWindowsDesktop -Offer windows-10 -Skus 19h1-evd"
+			}
+		},
+		"ScriptUri": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/shaunjacob/AzureImageBuilder/master/AzureImageBuilder.ps1",
+			"metadata": {
+				"description": "Location of powershell script to customize your image"
+			}
+		},
+		"SIGImageDefinitionId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/b20a9108-a5ef-474b-a027-4dbf612ca600/resourceGroups/aibwinsig/providers/Microsoft.Compute/galleries/CubesysSIG/images/WVD-2004-Office",
+			"metadata": {
+				"description": "Id of Shared Image Gallery to distribute image to, eg: /subscriptions/<subscriptionID>/resourceGroups/<SIG resourcegroup>/providers/Microsoft.Compute/galleries/<SIG name>/images/<image definition>"
+			}
+		},
+		"ManagedImageName": {
+			"type": "string",
+			"defaultValue": "AIB-Image",
+			"metadata": {
+				"description": "Name of the managed image, it will be created in the AIB resourcegroup"
+			}
+		},
+		"randomGUID": {
+			"type": "string",
+			"defaultValue": "",
+			"defaultValue": "[newGuid()]"
+		}
+	},
+	"variables": {
+		"imageTemplateName": "[concat('AIB',uniqueString('deployment().name',parameters('randomGUID')))]",
+		"ManagedImageId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/images/',parameters('ManagedImageName'))]"
+	},
+	"resources": [
+		{
+			"name": "[variables('imageTemplateName')]",
+			"type": "Microsoft.VirtualMachineImages/imageTemplates",
+			"apiVersion": "2019-05-01-preview",
+			"location": "[resourcegroup().location]",
+			"dependsOn": [],
+			"tags": {
+				"imagebuilderTemplate": "windows2019",
+        		"userIdentity": "enabled"
+            		},
+        		"identity": {
+            	"type": "UserAssigned",
+                    	"userAssignedIdentities": {
+                    	"/subscriptions/b20a9108-a5ef-474b-a027-4dbf612ca600/resourcegroups/aibwinsig/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testaibidentity080620": {}
                         
                 }
-                        },
-        "properties": {
-    
-            "buildTimeoutInMinutes" : 100,
-            
-            "vmProfile": 
-                {
-                "vmSize": "Standard_D2_v2",
-                "osDiskSizeGB": 127
-                },
-
-            "source": {
-                "type": "SharedImageVersion",
-                    "imageVersionId": "<sigDefImgVersionId>"
-                
-        },
-
-            "customize": [
-                {
-                    "type": "PowerShell",
-                    "name": "settingUpMgmtAgtPath",
-                    "inline": [
-                        "mkdir c:\\buildActions2",
-                        "echo Azure-Image-Builder-Was-Here  > c:\\buildActions2\\buildActionsOutput.txt" 
-                            ]
-                },
-                {
-                    "type": "WindowsUpdate",
-                    "searchCriteria": "IsInstalled=0",
-                    "filters": [
-                        "exclude:$_.Title -like '*Preview*'",
-                        "include:$true"
-                                ],
-                    "updateLimit": 20
-                }
-            ],
+			},
+			"properties": {
+				"source": {
+					"type": "PlatformImage",
+					"publisher": "[parameters('publisher')]",
+					"offer": "[parameters('offer')]",
+					"sku": "[parameters('sku')]",
+					"version": "[parameters('version')]"
+				},
+				"customize": [
+					{
+						"type": "PowerShell",
+						"name": "InstallApps",
+						"scriptUri": "[parameters('ScriptUri')]"
+					},
+					{
+						"type": "WindowsRestart",
+						"restartTimeout": "30m"
+					}
+				],
             "distribute": 
             [
                 {   
                     "type": "SharedImage",
-                    "galleryImageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/galleries/<sharedImageGalName>/images/<imageDefName>",
-                    "runOutputName": "<runOutputName>",
+                    "galleryImageId": "/subscriptions/b20a9108-a5ef-474b-a027-4dbf612ca600/resourceGroups/aibwinsig/providers/Microsoft.Compute/galleries/CubesysSIG/images/WVD-2004-Office",
+                    "runOutputName": "AIBSharedImage",
                     "artifactTags": {
                         "source": "azureVmImageBuilder",
-                        "baseosimg": "windows2019"
+                        "baseosimg": "windows10"
                     },
                     "replicationRegions": [
-                    "<region1>",
-                    "<region2>"
+                    "AustraliaEast"
                     ]
                 }
             ]
