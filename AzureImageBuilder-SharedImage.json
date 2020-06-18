@@ -101,18 +101,18 @@
 						"restartTimeout": "30m"
 					}
 				],
-            "distribute": 
-            [
-                {   
-                    "type": "SharedImage",
-                    "galleryImageId": "/subscriptions/b20a9108-a5ef-474b-a027-4dbf612ca600/resourceGroups/aibwinsig/providers/Microsoft.Compute/galleries/myaibsig01/images/winSvrimages",
-                    "runOutputName": "AIBSharedImage",
-                    "artifactTags": {
+                "distribute": 
+                [
+                    {   
+                        "type": "SharedImage",
+                        "galleryImageId": "/subscriptions/b20a9108-a5ef-474b-a027-4dbf612ca600/resourceGroups/aibwinsig/providers/Microsoft.Compute/galleries/myaibsig01/images/winSvrimages",
+                        "runOutputName": "AIBSharedImage",
+                        "artifactTags": {
                         "source": "azureVmImageBuilder",
                         "baseosimg": "windows10"
                     },
-                    "replicationRegions": [
-                    "AustraliaEast"
+                        "replicationRegions": [
+                        "AustraliaEast"
                     ]
                 }
             ]

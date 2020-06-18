@@ -1,52 +1,45 @@
-﻿#Connect to Azure
+﻿# Connect to Azure
 Login-AzAccount
 Select-AzSubscription "b20a9108-a5ef-474b-a027-4dbf612ca600"
-
-# Step 1: Import module
 Import-Module Az.Accounts
 
-# Step 2: get existing context
+# Get existing context
 $currentAzContext = Get-AzContext
-
-# destination image resource group
-$imageResourceGroup="aibwinsig01"
-
-# location (see possible locations in main docs)
-$location="westus"
-
-# your subscription, this will get your current subscription
-$subscriptionID=$currentAzContext.Subscription.Id
-
-# name of the image to be created
-$imageName="aibCustomImgWin10"
-
-# image template name
-$imageTemplateName="helloImageTemplateWin02ps"
-
-# distribution properties object name (runOutput), i.e. this gives you the properties of the managed image on completion
-$runOutputName="winclientR01"
-
-# create resource group
-New-AzResourceGroup -Name $imageResourceGroup -Location $location
-
 
 #Variables
 $imageResourceGroup = "aibwinsig"
-$templateFilePath = "C:\Users\ShaunJacob\Documents\GitHub\SJAzureImageBuilder\AzureImageBuilder-SharedImage.json"
 $location = "Westus2"
-$imageTemplateName = "testwin10shared"
+$imageTemplateName = "testwin10shared2"
+$sigGalleryName= "myaibsig01"
+$imageDefName ="winSvrimages"
+$idenityName="testaibidentity080620"
+$imageResourceGroup="aibwinsig"
+$location="westus"
+$subscriptionID=$currentAzContext.Subscription.Id
+$imageName="aibCustomImgWin10"
+$imageTemplateName="helloImageTemplateWin02ps"
+$runOutputName="winclientR01"
 
 
-#Submit template to AIB
-#New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -ApiVersion "2019-05-01-preview" -ima $imageTemplateName -svclocation $location
-New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -OutVariable Output -Verbose
+# Create Shared Image Gallery, choose replica region and gallery definition
+$sigGalleryName= "myaibsig01"
+$imageDefName ="winSvrimages"
+$replRegion2="eastus"
+New-AzGallery -GalleryName $sigGalleryName -ResourceGroupName $imageResourceGroup  -Location $location
+New-AzGalleryImageDefinition -GalleryName $sigGalleryName -ResourceGroupName $imageResourceGroup -Location $location -Name $imageDefName -OsState generalized -OsType Windows -Publisher 'myCo' -Offer 'Windows' -Sku 'Win2019'
 
-#Run the build
-$Output.Outputs["imageTemplateName"].Value
 
-Invoke-AzResourceAction -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ResourceName AIBo7ydjba3c26rg -Action Run -Force
+# Template URL and path
+$templateUrl="https://raw.githubusercontent.com/shaunjacob/AzureImageBuilder/master/AzureImageBuilder-SharedImage.json"
+$templateFilePath = "AzureImageBuilder-SharedImage.json"
+Invoke-WebRequest -Uri $templateUrl -OutFile $templateFilePath -UseBasicParsing
 
-#Get Status
-(Get-AzResource -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -Name AIBo7ydjba3c26rg).Properties.lastRunStatus | select -ExpandProperty message
+# Submit template to AIB
+New-AzResourceGroupDeployment -ResourceGroupName $imageResourceGroup -TemplateFile $templateFilePath -api-version "2019-05-01-preview" -imageTemplateName $imageTemplateName -svclocation $location
 
-$urlBuildStatus = [System.String]::Format("{0}subscriptions/{1}/resourceGroups/$imageResourceGroup/providers/Microsoft.VirtualMachineImages/imageTemplates/{2}?api-version=2019-05-01-preview", $managementEp, $currentAzureContext.Subscription.Id,$imageTemplateName)
+
+# Run the build
+Invoke-AzResourceAction -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview" -Action Run -Force
+
+# Get Status
+(Get-AzResource -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -Name $imageTemplateName).Properties.lastRunStatus | select -ExpandProperty message
