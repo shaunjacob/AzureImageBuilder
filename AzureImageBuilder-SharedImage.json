@@ -2,6 +2,18 @@
 	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"parameters": {
+
+        "imageTemplateName": {
+        "type": "string"
+        },
+
+        "api-version": {
+          "type": "string"
+        },
+
+        "svclocation": {
+            "type": "string"
+        },
 		"publisher": {
 			"type": "string",
 			"defaultValue": "MicrosoftWindowsDesktop"
@@ -54,10 +66,10 @@
 	},
 	"resources": [
 		{
-			"name": "[variables('imageTemplateName')]",
+			"name": "[parameters('imageTemplateName')]",
 			"type": "Microsoft.VirtualMachineImages/imageTemplates",
-			"apiVersion": "2019-05-01-preview",
-			"location": "[resourcegroup().location]",
+			"apiVersion": "[parameters('api-version')]",
+			"location": "[parameters('svclocation')]",
 			"dependsOn": [],
 			"tags": {
 				"imagebuilderTemplate": "windows2019",
