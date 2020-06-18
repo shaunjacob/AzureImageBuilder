@@ -105,7 +105,7 @@
             [
                 {   
                     "type": "SharedImage",
-                    "galleryImageId": "/subscriptions/b20a9108-a5ef-474b-a027-4dbf612ca600/resourceGroups/aibwinsig/providers/Microsoft.Compute/galleries/CubesysSIG/images/WVD-2004-Office",
+                    "galleryImageId": "/subscriptions/b20a9108-a5ef-474b-a027-4dbf612ca600/resourceGroups/aibwinsig/providers/Microsoft.Compute/galleries/myaibsig01/images/winSvrimages",
                     "runOutputName": "AIBSharedImage",
                     "artifactTags": {
                         "source": "azureVmImageBuilder",
